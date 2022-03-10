@@ -41,6 +41,8 @@ spec:
                 type: string
               provider:
                 description: provider for this resource
+                default: Dummy
+                enum: ["Dummy", "Equinix"]
                 type: string
               provider_info:
                 description: Provider specific config info (json)

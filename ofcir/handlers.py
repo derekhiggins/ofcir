@@ -35,7 +35,7 @@ def configure(settings: kopf.OperatorSettings, **_):
 @kopf.on.delete('metal3.io', 'v1', 'ciresource')
 def delete_fn(name, **kwargs):
     obj = getObject(name)
-    provider = providers.Equinix(**secrets)
+    provider = eval("providers."+spec['provider'])(**secrets)
     for _ in range(10):
         try:
             logger.info('deleting %r'%(name))
@@ -49,7 +49,7 @@ def delete_fn(name, **kwargs):
     when=lambda spec, status, **_: spec.get("state") != status.get("state")
 )
 def resolve(stopped, name, meta, spec, status, **kwargs):
-    provider = providers.Equinix(**secrets)
+    provider = eval("providers."+spec['provider'])(**secrets)
     while True:
         time.sleep(1)
         if stopped: break

@@ -6,7 +6,7 @@ metadata:
   namespace: openshift-machine-api
 spec:
     type: "cihost"
-    provider: "equinix"
+    provider: "Equinix"
     state: "registered"
 status: {"state":"registered"}
 ---
@@ -17,7 +17,63 @@ metadata:
   namespace: openshift-machine-api
 spec:
     type: "cihost"
-    provider: "equinix"
+    provider: "Equinix"
+    state: "registered"
+status: {"state":"registered"}
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-3
+  namespace: openshift-machine-api
+spec:
+    type: "cihost"
+    provider: "Dummy"
+    state: "registered"
+status: {"state":"registered"}
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-4
+  namespace: openshift-machine-api
+spec:
+    type: "cihost"
+    provider: "Dummy"
+    state: "registered"
+status: {"state":"registered"}
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-5
+  namespace: openshift-machine-api
+spec:
+    type: "cihost"
+    provider: "Dummy"
     state: "registered"
 status: {"state":"registered"}
 
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-6
+  namespace: openshift-machine-api
+spec:
+    type: "cihost"
+    provider: "Dummy"
+    state: "registered"
+status: {"state":"registered"}
+
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-7
+  namespace: openshift-machine-api
+spec:
+    type: "cihost"
+    provider: "Dummy"
+    state: "registered"
+status: {"state":"registered"}

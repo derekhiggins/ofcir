@@ -90,11 +90,11 @@ class Equinix(Base):
         device = self.manager.get_device(info["id"])
         device.delete()
 
-    def _wait_active():
+    def _wait_active(self, device_id):
         c=0
         while True:
             c=c+1
-            device = self.manager.get_device(info["id"])
+            device = self.manager.get_device(device_id)
             logger.debug('Device %s, State %s'%(device.hostname, device.state))
             if device.state == "active":
                 break
