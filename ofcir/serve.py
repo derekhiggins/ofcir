@@ -3,7 +3,7 @@ import kopf
 import kubernetes
 import random
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, abort
 
 import handlers
 
@@ -14,7 +14,7 @@ kubernetes.config.load_incluster_config()
 logger = logging.getLogger("").setLevel(logging.INFO)
 logger = logging.getLogger("ofcir")
 
-@app.route('/ofcir', methods=['GET'])
+@app.route('/ofcir', methods=['POST'])
 def aquire_cir():
     api = kubernetes.client.CustomObjectsApi()
 
@@ -22,7 +22,8 @@ def aquire_cir():
     # The return value from list_namespa... is a weird nested structure
     custom_objects = list(custom_objects.items())[1][1]
     rv = {}
-    for custom_object in random.shuffle(custom_objects):
+    random.shuffle(custom_objects)
+    for custom_object in custom_objects:
         obj = custom_object
         if obj["status"]["state"] != "available":
             continue
@@ -34,7 +35,8 @@ def aquire_cir():
         except:
             logger.info("Failed to get resource")
     else:
-        return rv
+        # 409 Conflict: request conflicts with the current state of the server
+        abort(409)
     rv["ip"] = obj["status"]["address"]
     rv["name"] = obj["metadata"]["name"]
     return jsonify(rv)
