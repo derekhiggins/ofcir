@@ -42,7 +42,6 @@ def delete_fn(name, **kwargs):
             provider.release(obj)
             return
         except:
-            raise # todo remove
             time.sleep(10)
     logger.info('failed deleting %r'%(name))
 

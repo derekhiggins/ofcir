@@ -1,7 +1,7 @@
 import logging
 import kopf
 import kubernetes
-import pprint
+import random
 
 from flask import Flask, jsonify
 
@@ -22,13 +22,13 @@ def aquire_cir():
     # The return value from list_namespa... is a weird nested structure
     custom_objects = list(custom_objects.items())[1][1]
     rv = {}
-    for custom_object in custom_objects:
-        # todo lock
+    for custom_object in random.shuffle(custom_objects):
         obj = custom_object
         if obj["status"]["state"] != "available":
             continue
         obj["status"]["state"] = "inuse"
         try:
+            # This should fail if another request grabs this host before us (replace vs patch)
             api_response = api.replace_namespaced_custom_object( group="metal3.io", version="v1", namespace="openshift-machine-api", plural="ciresources", name=obj["metadata"]["name"], body=obj)
             break
         except:

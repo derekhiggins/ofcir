@@ -15,7 +15,6 @@ class Equinix(Base):
         self.apitoken = kwargs["equinix_apitoken"]
         self.project = kwargs["equinix_project"]
 
-        # TODO: is this threadsafe??
         self.manager = packet.Manager(auth_token=self.apitoken)
 
     def clean(self, obj):
@@ -34,9 +33,8 @@ class Equinix(Base):
         ip = device.ip_addresses[0]["address"]
         obj["status"]["address"] = ip
         if device.state not in ["reinstalling", "provisioning"]:
-            # TODO: fix
-            #device.reinstall()
-            time.sleep(1) # reinstall takes over 10 minutes
+            device.reinstall()
+            time.sleep(60*10) # reinstall takes over 10 minutes
         c=0
         while True:
             c=c+1
@@ -70,7 +68,6 @@ class Equinix(Base):
                 return
 
             device = self.manager.create_device(
-                # TODO: priject id 
                 project_id = self.project,
                 hostname = name,
                 plan = "c3.small.x86",
@@ -79,7 +76,7 @@ class Equinix(Base):
             )
         info["id"] = device.id
 
-        time.sleep(10) # todo reinstall takes over 10 minutes
+        time.sleep(60*10)
         c=0
         while True:
             c=c+1
