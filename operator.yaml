@@ -1,0 +1,198 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: ciresources.metal3.io
+spec:
+  group: metal3.io
+  names:
+    kind: CIResource
+    listKind: CIResourceList
+    plural: ciresources
+    singular: ciresource
+    shortNames:
+    - cir
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: state req
+      jsonPath: .spec.state
+      name: StateReq
+      type: string
+    - description: state
+      jsonPath: .status.state
+      name: State
+      type: string
+    - description: address
+      jsonPath: .status.address
+      name: Address
+      type: string
+    name: v1
+    storage: true
+    served: true
+    schema:
+      openAPIV3Schema:
+        description: A resource for CI
+        properties:
+          spec:
+            properties:
+              type:
+                description: Type of CI resouce (only cihost)
+                type: string
+              provider:
+                description: provider for this resource
+                type: string
+              provider_info:
+                description: Provider specific config info (json)
+                type: string
+              state:
+                description: desired state
+                default: registered
+                enum: ["registered", "idle", "available"]
+                type: string
+            type: object
+          status:
+            description: status
+            properties:
+              state:
+                description: current state
+                default: registered
+                enum:
+                  - "registered" # Config exists but resource might not exist (provider may create/destrowhen status changed to/from registered
+                  - "idle" # Config and resource exists
+                  - "available" # Resource exists and available for use
+                  - "inuse" # Resource is currently in use
+                  - "cleaning" # Resource is being cleaned
+                  - "error" # Resource in error state
+                type: string
+              address:
+                description: IP address
+                default: ""
+                type: string
+              message:
+                description: Most recent status message
+                type: string
+                default: ""
+            required:
+            - state
+            type: object
+        type: object
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cir-operator
+  namespace: openshift-machine-api
+rules:
+- apiGroups:
+  - "metal3.io"
+  resources:
+  - ciresources
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - "metal3.io"
+  resources:
+  - ciresources/status
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cir-operator
+  namespace: openshift-machine-api
+roleRef:
+  kind: Role
+  name: cir-operator
+subjects:
+- kind: ServiceAccount
+  name: cir-operator
+  namespace: openshift-machine-api
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cir-operator
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: operator
+  namespace: openshift-machine-api
+  labels:
+    metal3.io/ofcir: operator
+spec:
+  serviceAccount: cir-operator
+  containers:
+  - name: operator
+    image: virthost.ostest.test.metalkube.org:5000/localimages/testimage:op
+    imagePullPolicy: Always
+    command:
+    - kopf
+    args:
+    - run
+    - --namespace=openshift-machine-api
+    - /app/handlers.py
+    - --verbose
+  - name: serve
+    image: virthost.ostest.test.metalkube.org:5000/localimages/testimage:op
+    imagePullPolicy: Always
+    command:
+    - python3
+    args:
+    - /app/serve.py
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ofcir
+  labels:
+    app: ofcir
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+  selector:
+    metal3.io/ofcir: operator
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ofcir
+  namespace: openshift-machine-api
+  labels:
+    app: ofcir
+spec:
+  host: ofcir.apps.ostest.test.metalkube.org
+  port:
+    targetPort: 5000
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: ofcir

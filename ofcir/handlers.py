@@ -1,0 +1,114 @@
+import json
+import base64
+import logging
+import time
+
+import kopf
+import kubernetes
+
+import providers
+
+logger = logging.getLogger("").setLevel(logging.INFO)
+logger = logging.getLogger("ofcir")
+
+def getObject(name):
+    api = kubernetes.client.CustomObjectsApi()
+    obj = api.get_namespaced_custom_object(group="metal3.io", version="v1", namespace="openshift-machine-api", plural="ciresources", name=name)
+    return obj
+def saveObject(obj):
+    api = kubernetes.client.CustomObjectsApi()
+    api_response = api.replace_namespaced_custom_object( group="metal3.io", version="v1", namespace="openshift-machine-api", plural="ciresources", name=obj["metadata"]["name"], body=obj)
+
+
+secrets={}
+@kopf.on.startup()
+def configure(settings: kopf.OperatorSettings, **_):
+    settings.posting.level = logging.INFO
+
+    kubernetes.config.load_incluster_config()
+    v1 = kubernetes.client.CoreV1Api()
+    secret = v1.read_namespaced_secret("ofcir-secrets", "openshift-machine-api")
+
+    for k,v in secret.data.items():
+        secrets[k] = base64.b64decode(v).decode()
+
+@kopf.on.delete('metal3.io', 'v1', 'ciresource')
+def delete_fn(name, **kwargs):
+    obj = getObject(name)
+    provider = providers.Equinix(**secrets)
+    for _ in range(10):
+        try:
+            logger.info('deleting %r'%(name))
+            provider.release(obj)
+            return
+        except:
+            raise # todo remove
+            time.sleep(10)
+    logger.info('failed deleting %r'%(name))
+
+@kopf.daemon('ciresource',
+    when=lambda spec, status, **_: spec.get("state") != status.get("state")
+)
+def resolve(stopped, name, meta, spec, status, **kwargs):
+    provider = providers.Equinix(**secrets)
+    while True:
+        time.sleep(1)
+        if stopped: break
+        time.sleep(10)
+        if stopped: break
+        # Save the resourceVersion, if we try to save the object after its been elsewhere
+        # changed then the replace will fail (using replace vs patch)
+        resourceVersion = meta["resourceVersion"]
+        action = None
+        if spec["state"] == "registered":
+            if status["state"] in ["inuse", "error"]:
+                continue
+            elif status["state"] == "cleaning":
+                action = provider.clean
+            elif status["state"] in ["idle", "available"]:
+                action = provider.release
+        elif spec["state"] == "idle":
+            if status["state"] in ["inuse", "error"]:
+                continue
+            elif status["state"] == "cleaning":
+                action = provider.clean
+            elif status["state"] in "registered":
+                action = provider.aquire
+        elif spec["state"] == "available":
+            if status["state"] in ["inuse", "error"]:
+                continue
+            elif status["state"] in ["idle", "cleaning"]:
+                action = provider.clean
+            elif status["state"] in "registered":
+                action = provider.aquire
+
+        logger.info('resolving %r'%(name))
+        try:
+            obj = getObject(name)
+            obj["metadata"]["resourceVersion"] = resourceVersion
+            try:
+                if action:
+                    action(obj)
+                obj["status"]["state"] = spec["state"]
+                obj["status"]["message"] = ""
+            except Exception as e:
+                obj["status"]["state"] = "error"
+                obj["status"]["message"] = repr(e.args)
+                logger.error('resolve error %r, %r'%(name, e))
+                raise
+            saveObject(obj)
+        except Exception as e:
+            logger.error('CRD api error %r, %r'%(name, e))
+            raise
+
+# Releases a resource if it is more then X hours "inuse"
+@kopf.timer('ciresource', idle=60*60*3, interval=6,
+    when=lambda spec, status, **_: status.get("state") == "inuse"
+)
+def release(stopped, name, meta, spec, status, **kwargs):
+    logger.info('releasing %r'%(name))
+    if status["state"] == "inuse":
+        obj = getObject(name)
+        obj["status"]["state"] = "cleaning"
+        obj["status"]["message"] = ""
+        saveObject(obj) 

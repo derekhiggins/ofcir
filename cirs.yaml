@@ -1,0 +1,23 @@
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-1
+  namespace: openshift-machine-api
+spec:
+    type: "cihost"
+    provider: "equinix"
+    state: "registered"
+status: {"state":"registered"}
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-2
+  namespace: openshift-machine-api
+spec:
+    type: "cihost"
+    provider: "equinix"
+    state: "registered"
+status: {"state":"registered"}
+
