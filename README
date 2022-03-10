@@ -1,4 +1,6 @@
 TODO:
-  o Removing hardcoding of Provider
   o ibmcloud provider
   o ironic provider
+  o remove hardcoded namespace (openshift-machine-api)
+  o auth on API
+  o uuid returned by POST should be used for DELETE
