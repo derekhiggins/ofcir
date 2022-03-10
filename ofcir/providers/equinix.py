@@ -35,17 +35,8 @@ class Equinix(Base):
         if device.state not in ["reinstalling", "provisioning"]:
             device.reinstall()
             time.sleep(60*10) # reinstall takes over 10 minutes
-        c=0
-        while True:
-            c=c+1
-            time.sleep(30)
-            device = self.manager.get_device(info["id"])
-            if device.state == "active":
-                break
-            if c > 60:
-                msg="Node not going Active "%name
-                logger.warn(msg)
-                raise Exception(msg)
+
+        self._wait_active(info["id"])
 
     def aquire(self, obj):
         name=obj["metadata"]["name"]
@@ -57,6 +48,7 @@ class Equinix(Base):
         count = 0
         for device in self.manager.list_all_devices(self.project):
             if name == device.hostname:
+                #TODO: may want to consider cleaning this node...
                 break
             if "cir-" in device.hostname:
                 count = count + 1
@@ -74,21 +66,11 @@ class Equinix(Base):
                 operating_system = "rocky_8",
                 facility = "any"
             )
+            time.sleep(60*10)
+
         info["id"] = device.id
 
-        time.sleep(60*10)
-        c=0
-        while True:
-            c=c+1
-            device = self.manager.get_device(info["id"])
-            logger.info('State %s'% device.state)
-            if device.state == "active":
-                break
-            if c > 60:
-                msg="Node not going Active "%name
-                logger.warn(msg)
-                raise Exception(msg)
-            time.sleep(30)
+        self._wait_active(info["id"])
 
         ip = device.ip_addresses[0]["address"]
         obj["status"]["address"] = ip
@@ -108,4 +90,16 @@ class Equinix(Base):
         device = self.manager.get_device(info["id"])
         device.delete()
 
-
+    def _wait_active():
+        c=0
+        while True:
+            c=c+1
+            device = self.manager.get_device(info["id"])
+            logger.debug('Device %s, State %s'%(device.hostname, device.state))
+            if device.state == "active":
+                break
+            if c > 60:
+                msg="Node not going Active "%name
+                logger.warn(msg)
+                raise Exception(msg)
+            time.sleep(30)
