@@ -16,6 +16,7 @@ logger = logging.getLogger("ofcir")
 
 @app.route('/ofcir', methods=['POST'])
 def aquire_cir():
+    logger.info("Aquiring CIR")
     api = kubernetes.client.CustomObjectsApi()
 
     custom_objects = api.list_namespaced_custom_object(group="metal3.io", version="v1", namespace="ofcir", plural="ciresources")
@@ -44,8 +45,16 @@ def aquire_cir():
 @app.route('/ofcir/<name>', methods=['DELETE'])
 def delete_cir(name):
     api = kubernetes.client.CustomObjectsApi()
-
-    obj = handlers.getObject(name)
+    logger.info("Freeing CIR %s"%name)
+    try:
+        obj = handlers.getObject(name)
+    except kubernetes.client.exceptions.ApiException as e:
+        logger.info("Problem Freeing CIR %s"%str(e))
+        if e.status == 404:
+            abort(404)
+        abort(e.status)
+    if obj["status"]["state"] != "inuse":
+        abort(409)
     obj["status"]["state"] = "cleaning"
     handlers.saveObject(obj)
     return jsonify({"status":"ok"})
