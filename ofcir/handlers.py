@@ -91,14 +91,14 @@ def resolve(stopped, name, meta, spec, status, **kwargs):
                 obj["status"]["state"] = spec["state"]
                 obj["status"]["message"] = ""
             except Exception as e:
-                obj["status"]["state"] = "error"
+                # TODO: revist how the error state works
+                # Lets not do this yet so that a retry isn't ignored
+                #obj["status"]["state"] = "error"
                 obj["status"]["message"] = repr(e.args)
                 logger.error('resolve error %r, %r'%(name, e))
-                raise
             saveObject(obj)
         except Exception as e:
             logger.error('CRD api error %r, %r'%(name, e))
-            raise
 
 # Releases a resource if it is more then X hours "inuse"
 @kopf.timer('ciresource', idle=60*60*3, interval=6,
@@ -110,4 +110,4 @@ def release(stopped, name, meta, spec, status, **kwargs):
         obj = getObject(name)
         obj["status"]["state"] = "cleaning"
         obj["status"]["message"] = ""
-        saveObject(obj) 
+        saveObject(obj)
