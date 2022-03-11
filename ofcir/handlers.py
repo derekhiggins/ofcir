@@ -33,7 +33,7 @@ def configure(settings: kopf.OperatorSettings, **_):
         secrets[k] = base64.b64decode(v).decode()
 
 @kopf.on.delete('metal3.io', 'v1', 'ciresource')
-def delete_fn(name, **kwargs):
+def delete_fn(name, spec, **kwargs):
     obj = getObject(name)
     provider = eval("providers."+spec['provider'])(**secrets)
     for _ in range(10):
