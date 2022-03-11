@@ -1,6 +1,37 @@
+
+ofcir - Organiser  for CI Resources
+
+A CI resource is a resource (only baremetal hosts for now) used by openshift CI,
+each resource is defind in Openshift as a Custom Object.
+
+Resources are provided by equinix, but other providers can be added in
+future, possible providers would be (ironic, beaker, ibmcloud etc..). A
+dummy provider is also provided for testing
+
+Provider data is held in tthe secret "ofcir-secrets" and has the format
+data:
+  equinix_apitoken: <base64encodedapitoken>
+  equinix_project: <base64encodedprojectid>
+
+To Deployment
+> bash deploy.sh
+
+To request a CIR a HTTP POST can be used (no parameters needed yet, but may be needed int he future)
+> curl -fX POST https://ofcir.apps.ostest.test.metalkube.org/ofcir
+
+To release a CIR a HTTP Delete can be used, includeing the CIR name
+> curl -fX DELETE https://ofcir.apps.ostest.test.metalkube.org/ofcir/cir-2
+
+Once a CIR is released it will be cleaned  (most of the logic can be found in ofcir/handlers.py)
+
+
+
+
 TODO:
   o ibmcloud provider
   o ironic provider
   o remove hardcoded namespace (openshift-machine-api)
   o auth on API
   o uuid returned by POST should be used for DELETE
+  o will Need to revisit the resource states and how they work after a trial
+  o Once happy with the logic write in Go if preformance is a problem
