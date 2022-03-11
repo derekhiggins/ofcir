@@ -18,7 +18,7 @@ logger = logging.getLogger("ofcir")
 def aquire_cir():
     api = kubernetes.client.CustomObjectsApi()
 
-    custom_objects = api.list_namespaced_custom_object(group="metal3.io", version="v1", namespace="openshift-machine-api", plural="ciresources")
+    custom_objects = api.list_namespaced_custom_object(group="metal3.io", version="v1", namespace="ofcir", plural="ciresources")
     # The return value from list_namespa... is a weird nested structure
     custom_objects = list(custom_objects.items())[1][1]
     rv = {}
@@ -30,7 +30,7 @@ def aquire_cir():
         obj["status"]["state"] = "inuse"
         try:
             # This should fail if another request grabs this host before us (replace vs patch)
-            api_response = api.replace_namespaced_custom_object( group="metal3.io", version="v1", namespace="openshift-machine-api", plural="ciresources", name=obj["metadata"]["name"], body=obj)
+            api_response = api.replace_namespaced_custom_object( group="metal3.io", version="v1", namespace="ofcir", plural="ciresources", name=obj["metadata"]["name"], body=obj)
             break
         except:
             logger.info("Failed to get resource")

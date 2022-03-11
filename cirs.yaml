@@ -3,7 +3,7 @@ apiVersion: metal3.io/v1
 kind: CIResource
 metadata:
   name: cir-1
-  namespace: openshift-machine-api
+  namespace: ofcir
 spec:
     type: "cihost"
     provider: "Equinix"
@@ -14,7 +14,7 @@ apiVersion: metal3.io/v1
 kind: CIResource
 metadata:
   name: cir-2
-  namespace: openshift-machine-api
+  namespace: ofcir
 spec:
     type: "cihost"
     provider: "Equinix"
@@ -25,7 +25,7 @@ apiVersion: metal3.io/v1
 kind: CIResource
 metadata:
   name: cir-3
-  namespace: openshift-machine-api
+  namespace: ofcir
 spec:
     type: "cihost"
     provider: "Dummy"
@@ -36,7 +36,7 @@ apiVersion: metal3.io/v1
 kind: CIResource
 metadata:
   name: cir-4
-  namespace: openshift-machine-api
+  namespace: ofcir
 spec:
     type: "cihost"
     provider: "Dummy"
@@ -47,7 +47,7 @@ apiVersion: metal3.io/v1
 kind: CIResource
 metadata:
   name: cir-5
-  namespace: openshift-machine-api
+  namespace: ofcir
 spec:
     type: "cihost"
     provider: "Dummy"
@@ -59,7 +59,7 @@ apiVersion: metal3.io/v1
 kind: CIResource
 metadata:
   name: cir-6
-  namespace: openshift-machine-api
+  namespace: ofcir
 spec:
     type: "cihost"
     provider: "Dummy"
@@ -71,7 +71,7 @@ apiVersion: metal3.io/v1
 kind: CIResource
 metadata:
   name: cir-7
-  namespace: openshift-machine-api
+  namespace: ofcir
 spec:
     type: "cihost"
     provider: "Dummy"

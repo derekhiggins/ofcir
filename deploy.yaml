@@ -84,7 +84,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: cir-operator
-  namespace: openshift-machine-api
+  namespace: ofcir
 rules:
 - apiGroups:
   - "metal3.io"
@@ -123,14 +123,14 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: cir-operator
-  namespace: openshift-machine-api
+  namespace: ofcir
 roleRef:
   kind: Role
   name: cir-operator
 subjects:
 - kind: ServiceAccount
   name: cir-operator
-  namespace: openshift-machine-api
+  namespace: ofcir
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -141,7 +141,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: operator
-  namespace: openshift-machine-api
+  namespace: ofcir
   labels:
     metal3.io/ofcir: operator
 spec:
@@ -154,7 +154,7 @@ spec:
     - kopf
     args:
     - run
-    - --namespace=openshift-machine-api
+    - --namespace=ofcir
     - /app/handlers.py
     - --verbose
   - name: serve
@@ -185,7 +185,7 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: ofcir
-  namespace: openshift-machine-api
+  namespace: ofcir
   labels:
     app: ofcir
 spec:

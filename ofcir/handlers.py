@@ -13,11 +13,11 @@ logger = logging.getLogger("ofcir")
 
 def getObject(name):
     api = kubernetes.client.CustomObjectsApi()
-    obj = api.get_namespaced_custom_object(group="metal3.io", version="v1", namespace="openshift-machine-api", plural="ciresources", name=name)
+    obj = api.get_namespaced_custom_object(group="metal3.io", version="v1", namespace="ofcir", plural="ciresources", name=name)
     return obj
 def saveObject(obj):
     api = kubernetes.client.CustomObjectsApi()
-    api_response = api.replace_namespaced_custom_object( group="metal3.io", version="v1", namespace="openshift-machine-api", plural="ciresources", name=obj["metadata"]["name"], body=obj)
+    api_response = api.replace_namespaced_custom_object( group="metal3.io", version="v1", namespace="ofcir", plural="ciresources", name=obj["metadata"]["name"], body=obj)
 
 
 secrets={}
@@ -27,7 +27,7 @@ def configure(settings: kopf.OperatorSettings, **_):
 
     kubernetes.config.load_incluster_config()
     v1 = kubernetes.client.CoreV1Api()
-    secret = v1.read_namespaced_secret("ofcir-secrets", "openshift-machine-api")
+    secret = v1.read_namespaced_secret("ofcir-secrets", "ofcir")
 
     for k,v in secret.data.items():
         secrets[k] = base64.b64decode(v).decode()

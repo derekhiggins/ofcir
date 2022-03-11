@@ -30,7 +30,6 @@ Once a CIR is released it will be cleaned  (most of the logic can be found in of
 TODO:
   o ibmcloud provider
   o ironic provider
-  o remove hardcoded namespace (openshift-machine-api)
   o auth on API
   o uuid returned by POST should be used for DELETE
   o will Need to revisit the resource states and how they work after a trial
