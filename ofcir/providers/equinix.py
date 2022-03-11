@@ -71,7 +71,7 @@ class Equinix(Base):
 
         info["id"] = device.id
 
-        self._wait_active(info["id"])
+        device = self._wait_active(info["id"])
 
         ip = device.ip_addresses[0]["address"]
         obj["status"]["address"] = ip
@@ -98,7 +98,7 @@ class Equinix(Base):
             device = self.manager.get_device(device_id)
             logger.debug('Device %s, State %s'%(device.hostname, device.state))
             if device.state == "active":
-                break
+                return device
             if c > 60:
                 msg="Node not going Active "%name
                 logger.warn(msg)
