@@ -11,12 +11,9 @@ app = Flask(__name__)
 kubernetes.config.load_incluster_config()
 #kubernetes.config.load_kube_config()
 
-logger = logging.getLogger("").setLevel(logging.INFO)
-logger = logging.getLogger("ofcir")
-
 @app.route('/ofcir', methods=['POST'])
 def aquire_cir():
-    logger.info("Aquiring CIR")
+    app.logger.debug("Aquiring CIR")
     api = kubernetes.client.CustomObjectsApi()
 
     custom_objects = api.list_namespaced_custom_object(group="metal3.io", version="v1", namespace="ofcir", plural="ciresources")
@@ -34,7 +31,7 @@ def aquire_cir():
             api_response = api.replace_namespaced_custom_object( group="metal3.io", version="v1", namespace="ofcir", plural="ciresources", name=obj["metadata"]["name"], body=obj)
             break
         except:
-            logger.info("Failed to get resource")
+            app.logger.debug("Failed to get resource")
     else:
         # 409 Conflict: request conflicts with the current state of the server
         abort(409)
@@ -45,13 +42,14 @@ def aquire_cir():
 @app.route('/ofcir/<name>', methods=['DELETE'])
 def delete_cir(name):
     api = kubernetes.client.CustomObjectsApi()
-    logger.info("Freeing CIR %s"%name)
+    app.logger.debug("Freeing CIR %s"%name)
     try:
         obj = handlers.getObject(name)
     except kubernetes.client.exceptions.ApiException as e:
-        logger.info("Problem Freeing CIR %s"%str(e))
         if e.status == 404:
             abort(404)
+        else:
+            app.logger.error("Problem Freeing CIR %s"%str(e))
         abort(e.status)
     if obj["status"]["state"] != "inuse":
         abort(409)
