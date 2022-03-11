@@ -27,6 +27,10 @@ spec:
       jsonPath: .status.address
       name: Address
       type: string
+    - description: lastUpdated
+      jsonPath: .status.lastUpdated
+      name: lastUpdated
+      type: date
     name: v1
     storage: true
     served: true
@@ -75,6 +79,10 @@ spec:
                 description: Most recent status message
                 type: string
                 default: ""
+              lastUpdated:
+                description: When was the CIR last updated by the operator
+                format: date-time
+                type: string
             required:
             - state
             type: object
