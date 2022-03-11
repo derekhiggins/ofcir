@@ -46,8 +46,9 @@ class Equinix(Base):
         info = json.loads(provider_info)
 
         count = 0
+        devicename = "cir-"+name
         for device in self.manager.list_all_devices(self.project):
-            if name == device.hostname:
+            if devicename == device.hostname:
                 #TODO: may want to consider cleaning this node...
                 break
             if "cir-" in device.hostname:
@@ -61,7 +62,7 @@ class Equinix(Base):
 
             device = self.manager.create_device(
                 project_id = self.project,
-                hostname = name,
+                hostname = devicename,
                 plan = "c3.small.x86",
                 operating_system = "rocky_8",
                 facility = "any"
