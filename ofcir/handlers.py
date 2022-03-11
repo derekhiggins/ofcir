@@ -112,8 +112,8 @@ def resolve(stopped, name, meta, spec, status, **kwargs):
     when=lambda spec, status, **_: status.get("state") == "inuse"
 )
 def release(stopped, name, meta, spec, status, **kwargs):
-    logger.info('releasing %r'%(name))
     if status["state"] == "inuse":
+        logger.info('releasing forgotten cir %r'%(name))
         obj = getObject(name)
         obj["status"]["state"] = "cleaning"
         obj["status"]["message"] = ""

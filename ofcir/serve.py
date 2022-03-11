@@ -13,7 +13,6 @@ kubernetes.config.load_incluster_config()
 
 @app.route('/ofcir', methods=['POST'])
 def aquire_cir():
-    app.logger.debug("Aquiring CIR")
     api = kubernetes.client.CustomObjectsApi()
 
     custom_objects = api.list_namespaced_custom_object(group="metal3.io", version="v1", namespace="ofcir", plural="ciresources")
@@ -35,6 +34,7 @@ def aquire_cir():
     else:
         # 409 Conflict: request conflicts with the current state of the server
         abort(409)
+    app.logger.debug("Aquiring CIR %s"%obj["metadata"]["name"])
     rv["ip"] = obj["status"]["address"]
     rv["name"] = obj["metadata"]["name"]
     return jsonify(rv)
@@ -42,7 +42,6 @@ def aquire_cir():
 @app.route('/ofcir/<name>', methods=['DELETE'])
 def delete_cir(name):
     api = kubernetes.client.CustomObjectsApi()
-    app.logger.debug("Freeing CIR %s"%name)
     try:
         obj = handlers.getObject(name)
     except kubernetes.client.exceptions.ApiException as e:
