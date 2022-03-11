@@ -50,11 +50,18 @@ def delete_fn(name, spec, **kwargs):
 )
 def resolve(stopped, name, meta, spec, status, **kwargs):
     provider = eval("providers."+spec['provider'])(**secrets)
+    first = True
     while True:
+
+        # stopped is update live when this loop should finish, but there is a short delay
+        # wait 1 second to avoid doing a iteration of the loop when not needed
         time.sleep(1)
         if stopped: break
-        time.sleep(10)
+        if not first:
+            time.sleep(10)
+        first = False
         if stopped: break
+
         # Save the resourceVersion, if we try to save the object after its been elsewhere
         # changed then the replace will fail (using replace vs patch)
         resourceVersion = meta["resourceVersion"]
