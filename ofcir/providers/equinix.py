@@ -63,7 +63,7 @@ class Equinix(Base):
             device = self.manager.create_device(
                 project_id = self.project,
                 hostname = devicename,
-                plan = "c3.small.x86",
+                plan = "m3.large.x86",
                 operating_system = "rocky_8",
                 facility = "any"
             )
