@@ -28,7 +28,7 @@ spec:
       name: Address
       type: string
     - description: lastUpdated
-      jsonPath: .status.lastUpdated
+      jsonPath: .spec.lastUpdated
       name: lastUpdated
       type: date
     name: v1
@@ -56,6 +56,12 @@ spec:
                 default: registered
                 enum: ["registered", "idle", "available"]
                 type: string
+              # This should really be in status, its here so that it resets the timer for the cleanup handler
+              # @kopf.timer idle=, using status doesn't reset the timer
+              lastUpdated:
+                description: When was the CIR last updated by the operator
+                format: date-time
+                type: string
             type: object
           status:
             description: status
@@ -79,10 +85,6 @@ spec:
                 description: Most recent status message
                 type: string
                 default: ""
-              lastUpdated:
-                description: When was the CIR last updated by the operator
-                format: date-time
-                type: string
             required:
             - state
             type: object

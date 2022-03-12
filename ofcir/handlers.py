@@ -17,7 +17,7 @@ def getObject(name):
     return obj
 def saveObject(obj):
     api = kubernetes.client.CustomObjectsApi()
-    obj["status"]["lastUpdated"] = time.strftime("%Y-%m-%dT%H:%M:%SZ")
+    obj["spec"]["lastUpdated"] = time.strftime("%Y-%m-%dT%H:%M:%SZ")
     api_response = api.replace_namespaced_custom_object( group="metal3.io", version="v1", namespace="ofcir", plural="ciresources", name=obj["metadata"]["name"], body=obj)
 
 

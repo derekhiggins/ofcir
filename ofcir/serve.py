@@ -27,7 +27,7 @@ def aquire_cir():
         obj["status"]["state"] = "inuse"
         try:
             # This should fail if another request grabs this host before us (replace vs patch)
-            api_response = api.replace_namespaced_custom_object( group="metal3.io", version="v1", namespace="ofcir", plural="ciresources", name=obj["metadata"]["name"], body=obj)
+            handlers.saveObject(obj)
             break
         except:
             app.logger.debug("Failed to get resource")
