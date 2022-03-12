@@ -41,7 +41,6 @@ def aquire_cir():
 
 @app.route('/ofcir/<name>', methods=['DELETE'])
 def delete_cir(name):
-    api = kubernetes.client.CustomObjectsApi()
     try:
         obj = handlers.getObject(name)
     except kubernetes.client.exceptions.ApiException as e:
