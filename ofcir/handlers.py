@@ -109,7 +109,7 @@ def resolve(stopped, name, meta, spec, status, **kwargs):
             logger.error('CRD api error %r, %r'%(name, e))
 
 # Releases a resource if it is more then X hours "inuse"
-@kopf.timer('ciresource', idle=60*60*3, interval=6,
+@kopf.timer('ciresource', idle=60*60*3, interval=60,
     when=lambda spec, status, **_: status.get("state") == "inuse"
 )
 def release(stopped, name, meta, spec, status, **kwargs):
