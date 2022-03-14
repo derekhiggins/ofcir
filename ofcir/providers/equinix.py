@@ -6,6 +6,7 @@ import packet
 
 from . import Base
 
+logging.getLogger("").setLevel(logging.DEBUG)
 logger = logging.getLogger("ofcir.equinix")
 
 class Equinix(Base):
