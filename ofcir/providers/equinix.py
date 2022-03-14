@@ -50,14 +50,15 @@ class Equinix(Base):
         for device in self.manager.list_all_devices(self.project):
             if devicename == device.hostname:
                 #TODO: may want to consider cleaning this node...
+                logger.info('Aquired existing node %s %s'%(device.hostname, device.id))
                 break
             if "cir-" in device.hostname:
                 count = count + 1
         else:
-            logger.info('Creating new node %s'% count)
+            logger.debug('Creating new node %s (%s)'%(devicename, count))
             # TODO: remove safetly when we are sure this wont accidently create a gazillion BM servers
             if count > 5:
-                logger.info('SAFETY: TOO MANY SERVERS: %s'%count)
+                logger.error('SAFETY: TOO MANY SERVERS: %s'%count)
                 return
 
             device = self.manager.create_device(
