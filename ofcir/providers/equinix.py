@@ -68,6 +68,12 @@ class Equinix(Base):
                 operating_system = "rocky_8",
                 facility = "any"
             )
+            logger.info('Created new node %s, %s'%(devicename, device.id))
+            time.sleep(60)
+            # Nodes sometimes vanish after create_device returned success
+            # lets not wait 10 minutes to find out, "get_device" will raise
+            # an exception in this case then the provider with be retried
+            device = self.manager.get_device(device.id)
             time.sleep(60*10)
 
         info["id"] = device.id
@@ -92,7 +98,7 @@ class Equinix(Base):
         device = self.manager.get_device(info["id"])
         device.delete()
 
-    def _wait_active(self, device_id):
+    def _wait_active(self, device_id, i=60):
         c=0
         while True:
             c=c+1
@@ -100,7 +106,7 @@ class Equinix(Base):
             logger.debug('Device %s, State %s'%(device.hostname, device.state))
             if device.state == "active":
                 return device
-            if c > 60:
+            if c > i:
                 msg="Node not going Active "%name
                 logger.warn(msg)
                 raise Exception(msg)
