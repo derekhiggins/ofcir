@@ -6,7 +6,6 @@ import packet
 
 from . import Base
 
-logging.getLogger("").setLevel(logging.DEBUG)
 logger = logging.getLogger("ofcir.equinix")
 
 class Equinix(Base):
@@ -104,11 +103,11 @@ class Equinix(Base):
         while True:
             c=c+1
             device = self.manager.get_device(device_id)
-            logger.debug('Device %s, State %s'%(device.hostname, device.state))
+            logger.info('Device %s, State %s'%(device.hostname, device.state))
             if device.state == "active":
                 return device
             if c > i:
-                msg="Node not going Active "%name
+                msg="Node not going Active %s"%device.hostname
                 logger.warn(msg)
                 raise Exception(msg)
             time.sleep(30)

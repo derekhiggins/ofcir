@@ -166,7 +166,6 @@ spec:
     - run
     - --namespace=ofcir
     - /app/handlers.py
-    - --verbose
   - name: serve
     image: virthost.ostest.test.metalkube.org:5000/localimages/testimage:op
     imagePullPolicy: Always
@@ -174,6 +173,7 @@ spec:
     - python3
     args:
     - /app/serve.py
+    - --log=INFO
 ---
 apiVersion: v1
 kind: Service

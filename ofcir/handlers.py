@@ -8,7 +8,6 @@ import kubernetes
 
 import providers
 
-logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 logger = logging.getLogger("ofcir")
 
 def getObject(name):
