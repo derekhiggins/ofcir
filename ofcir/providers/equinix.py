@@ -58,7 +58,7 @@ class Equinix(Base):
         else:
             logger.debug('Creating new node %s (%s)'%(devicename, count))
             # TODO: remove safetly when we are sure this wont accidently create a gazillion BM servers
-            if count > 5:
+            if count > 10:
                 logger.error('SAFETY: TOO MANY SERVERS: %s'%count)
                 return
 
