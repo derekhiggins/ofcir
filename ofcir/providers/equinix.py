@@ -65,7 +65,7 @@ class Equinix(Base):
             device = self.manager.create_device(
                 project_id = self.project,
                 hostname = devicename,
-                plan = "m3.large.x86",
+                plan = "s3.xlarge.x86",
                 operating_system = "rocky_8",
                 # Cant use any as we end up with hosts in Sao Paulo (more expensive)
                 # TODO: check /capacity
