@@ -1,6 +1,7 @@
 import json
 import time
 import logging
+import random
 
 import packet
 
@@ -66,7 +67,9 @@ class Equinix(Base):
                 hostname = devicename,
                 plan = "m3.large.x86",
                 operating_system = "rocky_8",
-                facility = "any"
+                # Cant use any as we end up with hosts in Sao Paulo (more expensive)
+                # TODO: check /capacity
+                facility = random.choice(["da11","dc10","dc13","ny5","sv15"])
             )
             logger.info('Created new node %s, %s'%(devicename, device.id))
             time.sleep(60)
