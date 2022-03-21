@@ -28,7 +28,7 @@ metadata:
   namespace: ofcir
 spec:
     type: "cihost"
-    provider: "Dummy"
+    provider: "Equinix"
     state: "registered"
 status: {"state":"registered"}
 ---
@@ -39,7 +39,7 @@ metadata:
   namespace: ofcir
 spec:
     type: "cihost"
-    provider: "Dummy"
+    provider: "Equinix"
     state: "registered"
 status: {"state":"registered"}
 ---
@@ -50,7 +50,7 @@ metadata:
   namespace: ofcir
 spec:
     type: "cihost"
-    provider: "Dummy"
+    provider: "Equinix"
     state: "registered"
 status: {"state":"registered"}
 
@@ -62,7 +62,7 @@ metadata:
   namespace: ofcir
 spec:
     type: "cihost"
-    provider: "Dummy"
+    provider: "Equinix"
     state: "registered"
 status: {"state":"registered"}
 
@@ -74,6 +74,50 @@ metadata:
   namespace: ofcir
 spec:
     type: "cihost"
-    provider: "Dummy"
+    provider: "Equinix"
+    state: "registered"
+status: {"state":"registered"}
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-8
+  namespace: ofcir
+spec:
+    type: "cihost"
+    provider: "Equinix"
+    state: "registered"
+status: {"state":"registered"}
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-9
+  namespace: ofcir
+spec:
+    type: "cihost"
+    provider: "Equinix"
+    state: "registered"
+status: {"state":"registered"}
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-10
+  namespace: ofcir
+spec:
+    type: "cihost"
+    provider: "Equinix"
+    state: "registered"
+status: {"state":"registered"}
+---
+apiVersion: metal3.io/v1
+kind: CIResource
+metadata:
+  name: cir-11
+  namespace: ofcir
+spec:
+    type: "cihost"
+    provider: "Equinix"
     state: "registered"
 status: {"state":"registered"}
