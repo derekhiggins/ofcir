@@ -150,10 +150,10 @@ metadata:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: operator
+  name: ofcir
   namespace: ofcir
   labels:
-    metal3.io/ofcir: operator
+    metal3.io/ofcir: api
 spec:
   serviceAccount: cir-operator
   containers:
@@ -188,7 +188,7 @@ spec:
       port: 5000
       targetPort: 5000
   selector:
-    metal3.io/ofcir: operator
+    metal3.io/ofcir: api
   type: ClusterIP
 ---
 apiVersion: route.openshift.io/v1
