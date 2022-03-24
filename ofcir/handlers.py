@@ -69,9 +69,7 @@ def resolve(stopped, name, meta, spec, status, **kwargs):
         if spec["state"] == "registered":
             if status["state"] in ["inuse", "error"]:
                 continue
-            elif status["state"] == "cleaning":
-                action = provider.clean
-            elif status["state"] in ["idle", "available"]:
+            elif status["state"] in ["cleaning", "idle", "available"]:
                 action = provider.release
         elif spec["state"] == "idle":
             if status["state"] in ["inuse", "error"]:
