@@ -100,6 +100,7 @@ class Equinix(Base):
         info = json.loads(provider_info)
         device = self.manager.get_device(info["id"])
         device.delete()
+        obj["status"]["address"] = ''
 
     def _wait_active(self, device_id, i=60):
         c=0

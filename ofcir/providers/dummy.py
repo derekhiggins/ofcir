@@ -22,5 +22,6 @@ class Dummy(Base):
 
     def release(self, obj):
         name=obj["metadata"]["name"]
+        obj["status"]["address"] = ''
         logger.info('releasing %s'%name)
         
