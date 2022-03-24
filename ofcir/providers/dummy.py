@@ -2,7 +2,8 @@
 from . import Base
 import logging
 import time
-logger = logging.getLogger("ofcir")
+
+logger = logging.getLogger("ofcir.dummy")
 
 class Dummy(Base):
     def __init__(self, *args, **kwargs):
