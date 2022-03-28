@@ -35,7 +35,7 @@ class Equinix(Base):
         obj["status"]["address"] = ip
         if device.state not in ["reinstalling", "provisioning"]:
             device.reinstall()
-            time.sleep(60*10) # reinstall takes over 10 minutes
+            time.sleep(60*7) # reinstall takes over 7 minutes
 
         self._wait_active(info["id"])
 
@@ -74,10 +74,10 @@ class Equinix(Base):
             logger.info('Created new node %s, %s'%(devicename, device.id))
             time.sleep(60)
             # Nodes sometimes vanish after create_device returned success
-            # lets not wait 10 minutes to find out, "get_device" will raise
+            # lets not wait 7 minutes to find out, "get_device" will raise
             # an exception in this case then the provider with be retried
             device = self.manager.get_device(device.id)
-            time.sleep(60*10)
+            time.sleep(60*7)
 
         info["id"] = device.id
 
