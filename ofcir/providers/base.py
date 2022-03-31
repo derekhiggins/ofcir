@@ -7,3 +7,7 @@ class Base():
     def release(self, obj):
         pass
 
+class ProviderException(Exception):
+    def __init__(self, message, state=None):
+        super().__init__(message)
+        self.state = state

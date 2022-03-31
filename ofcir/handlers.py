@@ -95,6 +95,12 @@ def resolve(stopped, name, meta, spec, status, **kwargs):
                     action(obj)
                 obj["status"]["state"] = spec["state"]
                 obj["status"]["message"] = ""
+            except providers.ProviderException as e:
+                # Allow to operator to update the state
+                if e.state:
+                    obj["status"]["state"] = e.state
+                obj["status"]["message"] = repr(e.args)
+                logger.error('resolve provider error %r, %r'%(name, e))
             except Exception as e:
                 # TODO: revist how the error state works
                 # Lets not do this yet so that a retry isn't ignored

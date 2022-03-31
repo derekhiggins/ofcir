@@ -2,10 +2,11 @@ import json
 import time
 import logging
 import random
+import socket
 
 import packet
 
-from . import Base
+from . import Base, ProviderException
 
 logger = logging.getLogger("ofcir.equinix")
 
@@ -26,7 +27,7 @@ class Equinix(Base):
         if not provider_info:
             msg="Missing provider_info %s"%name
             logger.warn(msg)
-            raise Exception(msg)
+            raise ProviderException(msg)
 
         info = json.loads(provider_info)
 
@@ -95,7 +96,7 @@ class Equinix(Base):
         if not provider_info:
             msg="Missing provider_info %s"%name
             logger.warn(msg)
-            raise Exception(msg)
+            raise ProviderException(msg)
 
         info = json.loads(provider_info)
         device = self.manager.get_device(info["id"])
@@ -109,9 +110,31 @@ class Equinix(Base):
             device = self.manager.get_device(device_id)
             logger.info('Device %s, State %s'%(device.hostname, device.state))
             if device.state == "active":
-                return device
+                break
             if c > i:
                 msg="Node not going Active %s"%device.hostname
                 logger.warn(msg)
-                raise Exception(msg)
+                raise ProviderException(msg)
+            time.sleep(30)
+
+        c=0
+        while True:
+            c=c+1
+            ip = device.ip_addresses[0]["address"]
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            logger.info('Testing ssh %r'%(device.hostname))
+            if sock.connect_ex((ip, 22)) == 0:
+                return device
+            # 30 minutes is a long time to be waiting for ssh
+            # but we want to avoid a fast loop constantly deleting
+            # and creating new nodes due to a network outage
+            # (we get billed for an hour each time)
+            if c > 60:
+                # Nodes where this happens don't tend to recover
+                # delete it so a new one will be created
+                msg="Node has no ssh port open, deleting %s"%device.hostname
+                device.delete()
+                logger.warn(msg)
+                # Set the status.state backt to registered so we acquire a new node
+                raise ProviderException(msg, 'registered')
             time.sleep(30)
