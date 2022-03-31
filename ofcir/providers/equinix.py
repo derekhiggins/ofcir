@@ -24,7 +24,7 @@ class Equinix(Base):
 
         provider_info = obj["spec"].get("provider_info")
         if not provider_info:
-            msg="Missing provider_info "%name
+            msg="Missing provider_info %s"%name
             logger.warn(msg)
             raise Exception(msg)
 
@@ -93,7 +93,7 @@ class Equinix(Base):
         
         provider_info = obj["spec"].get("provider_info")
         if not provider_info:
-            msg="Missing provider_info "%name
+            msg="Missing provider_info %s"%name
             logger.warn(msg)
             raise Exception(msg)
 
