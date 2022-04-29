@@ -46,7 +46,7 @@ spec:
               provider:
                 description: provider for this resource
                 default: Dummy
-                enum: ["Dummy", "Equinix", "IBMCloud"]
+                enum: ["Dummy", "Equinix", "IBMCloud", "Ironic"]
                 type: string
               provider_info:
                 description: Provider specific config info (json)
