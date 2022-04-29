@@ -4,8 +4,8 @@ set -ex
 
 cd $(dirname $0)
 
-podman build -f Dockerfile -t testyimage:op
-podman push --authfile /opt/dev-scripts/pull_secret.json localhost/testyimage:op virthost.ostest.test.metalkube.org:5000/localimages/testimage:op
+podman build -f Dockerfile -t ofcirimage:lastest
+podman push --authfile /opt/dev-scripts/pull_secret.json localhost/ofcirimage:lastest virthost.ostest.test.metalkube.org:5000/localimages/testimage:op
 oc get project ofcir || oc new-project ofcir
 
 DATE=$(date +%s)
