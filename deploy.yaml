@@ -12,6 +12,7 @@ spec:
     singular: ciresource
     shortNames:
     - cir
+    - cirs
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
