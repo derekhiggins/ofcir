@@ -42,7 +42,8 @@ class Ironic(Base):
 
 
         if node.provision_state not in ["cleaning", "clean wait", "available"]:
-            self.ironic.node.update(info["id"], [{"op":"add", "path":"/instance_info", "value":{"image_source":"http://10.10.129.10:8080/images/CentOS-Stream-GenericCloud-8-20220125.1.x86_64.qcow2", "image_checksum":"http://10.10.129.10:8080/images/CentOS-Stream-GenericCloud-8-20220125.1.x86_64.qcow2.md5sum"}}])
+            image = node.extra["image"]
+            self.ironic.node.update(node.uuid, [{"op":"add", "path":"/instance_info", "value":{"image_source":image, "image_checksum":image+".md5sum"}}])
             self.ironic.node.set_provision_state(info["id"], "rebuild", configdrive=cdstr)
             time.sleep(60*7) # reinstall takes over 7 minutes
 
@@ -51,15 +52,16 @@ class Ironic(Base):
     def aquire(self, obj):
         name=obj["metadata"]["name"]
         logger.info('aquiring %s'%name)
-        
+
         provider_info = obj["spec"].get("provider_info", "{}")
         info = json.loads(provider_info)
 
-        for node in self.ironic.node.list():
+        for node in self.ironic.node.list(fields=['uuid','extra','name','provision_state']):
             if name == node.name:
                 logger.info('Found node %s %s, state=%s'%(node.name, node.uuid, node.provision_state))
                 if node.provision_state in [ "available", "active"]:
-                    self.ironic.node.update(node.uuid, [{"op":"add", "path":"/instance_info", "value":{"image_source":"http://10.10.129.10:8080/images/CentOS-Stream-GenericCloud-8-20220125.1.x86_64.qcow2", "image_checksum":"http://10.10.129.10:8080/images/CentOS-Stream-GenericCloud-8-20220125.1.x86_64.qcow2.md5sum"}}])
+                    image = node.extra["image"]
+                    self.ironic.node.update(node.uuid, [{"op":"add", "path":"/instance_info", "value":{"image_source":image, "image_checksum":image+".md5sum"}}])
                     newstate = "active"
                     if node.provision_state == "active":
                         newstate = "rebuild"
@@ -69,7 +71,7 @@ class Ironic(Base):
             msg="Failed to find a active/available node to aquire %s"%name
             logger.warn(msg)
             raise ProviderException(msg)
-            
+
         info["id"] = node.uuid
 
         node = self._wait_active(info["id"])
@@ -81,7 +83,7 @@ class Ironic(Base):
     def release(self, obj):
         name=obj["metadata"]["name"]
         logger.info('releasing %s'%name)
-        
+
         provider_info = obj["spec"].get("provider_info")
         if not provider_info:
             msg="Missing provider_info %s"%name
