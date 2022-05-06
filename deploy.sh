@@ -9,6 +9,7 @@ podman push --authfile /opt/dev-scripts/pull_secret.json localhost/ofcirimage:la
 oc get project ofcir || oc new-project ofcir
 
 DATE=$(date +%s)
+mkdir -p logs
 oc logs ofcir -c operator > logs/operator.${DATE}.log || true
 oc logs ofcir -c serve > logs/serve.${DATE}.log || true
 
