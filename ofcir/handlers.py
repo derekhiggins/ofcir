@@ -66,24 +66,25 @@ def resolve(stopped, name, meta, spec, status, **kwargs):
         # changed then the replace will fail (using replace vs patch)
         resourceVersion = meta["resourceVersion"]
         action = None
+        status_state = status.get("state","registered")
         if spec["state"] == "registered":
-            if status["state"] in ["inuse", "error"]:
+            if status_state in ["inuse", "error"]:
                 continue
-            elif status["state"] in ["cleaning", "idle", "available"]:
+            elif status_state in ["cleaning", "idle", "available"]:
                 action = provider.release
         elif spec["state"] == "idle":
-            if status["state"] in ["inuse", "error"]:
+            if status_state in ["inuse", "error"]:
                 continue
-            elif status["state"] == "cleaning":
+            elif status_state == "cleaning":
                 action = provider.clean
-            elif status["state"] in "registered":
+            elif status_state in "registered":
                 action = provider.aquire
         elif spec["state"] == "available":
-            if status["state"] in ["inuse", "error"]:
+            if status_state in ["inuse", "error"]:
                 continue
-            elif status["state"] in ["idle", "cleaning"]:
+            elif status_state in ["idle", "cleaning"]:
                 action = provider.clean
-            elif status["state"] in "registered":
+            elif status_state in "registered":
                 action = provider.aquire
 
         logger.info('resolving %r'%(name))
