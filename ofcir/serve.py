@@ -3,7 +3,7 @@ import kopf
 import kubernetes
 import random
 
-from flask import Flask, jsonify, abort
+from flask import Flask, jsonify, abort, request
 
 import handlers
 
@@ -15,6 +15,9 @@ kubernetes.config.load_incluster_config()
 def aquire_cir():
     api = kubernetes.client.CustomObjectsApi()
 
+    cirtype = request.args.get('type', 'cihost')
+
+    # using field sectors here would be great
     custom_objects = api.list_namespaced_custom_object(group="metal3.io", version="v1", namespace="ofcir", plural="ciresources")
     # The return value from list_namespa... is a weird nested structure
     custom_objects = list(custom_objects.items())[1][1]
@@ -23,6 +26,8 @@ def aquire_cir():
     for custom_object in custom_objects:
         obj = custom_object
         if obj["status"]["state"] != "available":
+            continue
+        if obj["spec"]["type"] != cirtype:
             continue
         obj["status"]["state"] = "inuse"
         try:
