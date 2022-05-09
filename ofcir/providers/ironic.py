@@ -91,7 +91,9 @@ class Ironic(Base):
             raise ProviderException(msg)
 
         info = json.loads(provider_info)
-        self.ironic.node.set_provision_state(info["id"], "clean")
+        node=self.ironic.node.get(info["id"])
+        if node.provision_state == "active":
+            self.ironic.node.set_provision_state(info["id"], "undeploy")
         obj["status"]["address"] = ''
 
     def _wait_active(self, device_id, i=30):
