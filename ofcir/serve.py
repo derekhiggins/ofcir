@@ -37,6 +37,7 @@ def aquire_cir():
     app.logger.debug("Aquiring CIR %s"%obj["metadata"]["name"])
     rv["ip"] = obj["status"]["address"]
     rv["name"] = obj["metadata"]["name"]
+    rv["extra"] = obj["spec"]["extra"]
     return jsonify(rv)
 
 @app.route('/ofcir/<name>', methods=['DELETE'])

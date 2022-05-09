@@ -63,6 +63,10 @@ spec:
                 description: When was the CIR last updated by the operator
                 format: date-time
                 type: string
+              extra:
+                description: extra data provided to the client using this resource
+                default: {}
+                type: object
             type: object
           status:
             description: status
