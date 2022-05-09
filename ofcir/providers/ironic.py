@@ -10,7 +10,7 @@ from . import Base, ProviderException
 
 logger = logging.getLogger("ofcir.ironic")
 
-cdstr={"meta_data": {"public_keys": {"0": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDuQAJLlOQ8jVIsjspcpuqteZN27TEctPxwRaLvamVyEiqHrBtcVAEk42/u0CqdX1n0ki4Le/+NSDfkz6XZG6jgO+YVjq2+qjpklRPIf/plFbmTggMf3a2RQ/H+34aM+Dx8AbS9o27FX6HjYL/dZDr6OaUJUTXV/fea+XgGCoFxI4YEuiiJJoOMvQkMNXXfSOWTVvClWHGDXVgfdc00u1uAA3PRxgD06Xl5tvAPGzIDlrgEBB4qvwTim/b4D1Lf4q+aDnDzlgsoSL5oDbwdAjuylMbo5tzNe8XzxWBOj91cCWHswToU0St2FqZR7E7uRUMSn05SyzKWfw61pyAFEbocKQ3uuD3vrL9CkQOer8dO79fE5ihEmCO8ZPRHjNaUR7XJ/bDgromqmMMJ5fnLsOab0gfRCXySERtOkYajls3n0ekjzXUfknZSTlI9yJ9OPzrBUygM1s6+yiKwPVCXRz0ljMqjHtPK69wKT1Mt6IV/fIC5MKoeG1Zh2uuSFYLmYjE= ofcirkey"}}}
+cdstr={"meta_data": {"public_keys": {"0": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCuCKx7kbcLQ6CBdgy+UtkV48h8Sj/REluJlGQfg5ZQIa64oAxRExbtgLe8s6ThAT50FwhKagel3IjQbOwYr9cuCjuK2D70x9VeMWNOj6MZSA8/Rg0TWRuOWktmInX2gZMTxAb0L5b07q3e+dZJbij9ZrvEktcEtS54fuh2tQZjVhcySfefiwSFibFucmIGbj5xsg9AHxnlKDijomPC7I0BOHAFJ5ZXEhdVfQxLiBCqUmIU6dHMFh6lb9fHNkg79XbFcEbG3Ja7maXlHPhP+ev9oNazZRmoqEuEvJbT0KG3vIYAmYFxDlvyLJI8gw6BmueHjW1NQeLIjTI44NZCkLhBoqDEr5fjNnul7gzEcSXOTygCGu05OX8nkwG1Q9CyGn7RS8/wmDiK0gUK3ZMXHgXcWU2RNHQW+YDv2RzzVHEElsSC3Co1Rw/1nBKP3hCqno8EY8QwoWO78aRc5v/jdG1PaTLjUoer37T2vjRlOUItlIvgGp9+JWdw4fIzQtGiLrk="}}}
 
 class Ironic(Base):
     def __init__(self, *args, **kwargs):
